@@ -270,4 +270,26 @@ input:focus, select:focus {
 .summary-item:has(.label:contains("Tasa mensual")) .value {
   color: #7c3aed;          /* morado suave para destacar */
   font-weight: 700;
+
+}
+.loan-header {
+  padding: 1.25rem 1.5rem;
+  background: #f8fafc;
+  border-radius: 0.75rem 0.75rem 0 0;
+  transition: background 0.2s;
+}
+
+.loan-header:hover {
+  background: #f1f5f9;
+}
+
+.cuotas-container {
+  padding: 0 1.5rem 1.5rem;
+  background: white;
+  border-radius: 0 0 0.75rem 0.75rem;
+}
+
+.toggle-icon {
+  transition: transform 0.3s ease;
+  display: inline-block;
 }
