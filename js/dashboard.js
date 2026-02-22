@@ -31,7 +31,7 @@ export async function cargarPrestamos() {
 
   lista.innerHTML = "";
 
-  for (let p of prestamos) {
+  for (const p of prestamos) {
     const capital = Number(p.capital);
     const totalPagar = Number(p.total_pagar);
     const pagado = Number(p.total_pagado || 0);
@@ -47,42 +47,43 @@ export async function cargarPrestamos() {
     const estadoClass = p.estado === 'cancelado' ? 'status-paid' : 'status-active';
 
     div.innerHTML = `
-      <div class="loan-header">
-        <h3>
+      <div class="loan-header" onclick="toggleCuotas(this)" style="cursor: pointer; user-select: none;">
+        <h3 style="margin: 0; display: flex; justify-content: space-between; align-items: center;">
           ${p.cliente || 'Cliente sin nombre asignado'}
           <small style="color:#64748b; font-size:0.85rem; margin-left:0.75rem;">
             (${p.id.substring(0,8)}…)
           </small>
+          <span class="toggle-icon" style="font-size:1.2rem; transition: transform 0.3s;">▼</span>
         </h3>
+
+        <div class="loan-summary" style="margin-top: 1rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem;">
+          <div class="summary-item">
+            <div class="label">Capital</div>
+            <div class="value">$${format(capital)}</div>
+          </div>
+          <div class="summary-item">
+            <div class="label">Total a pagar</div>
+            <div class="value">$${format(totalPagar)}</div>
+          </div>
+          <div class="summary-item">
+            <div class="label">Saldo pendiente</div>
+            <div class="value">$${format(saldo)}</div>
+          </div>
+          <div class="summary-item">
+            <div class="label">Tasa mensual</div>
+            <div class="value">${formatPorcentaje(p.tasa)}</div>
+          </div>
+          <div class="summary-item">
+            <div class="label">Estado</div>
+            <div class="value ${estadoClass}">${(p.estado || 'activo').toUpperCase()}</div>
+          </div>
+        </div>
       </div>
 
-      <div class="loan-summary">
-        <div class="summary-item">
-          <div class="label">Capital</div>
-          <div class="value">$${format(capital)}</div>
-        </div>
-        <div class="summary-item">
-          <div class="label">Total a pagar</div>
-          <div class="value">$${format(totalPagar)}</div>
-        </div>
-        <div class="summary-item">
-          <div class="label">Saldo pendiente</div>
-          <div class="value">$${format(saldo)}</div>
-        </div>
-        <div class="summary-item">
-          <div class="label">Tasa mensual</div>
-          <div class="value">${formatPorcentaje(p.tasa)}</div>
-        </div>
-        <div class="summary-item">
-          <div class="label">Estado</div>
-          <div class="value ${estadoClass}">${(p.estado || 'activo').toUpperCase()}</div>
-        </div>
-      </div>
-
-      <div class="cuotas-container">
+      <div class="cuotas-container" style="display: none; max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, padding 0.4s ease;">
         <div class="cuota-row header">
           <div class="cuota-num">N°</div>
-          <div class="cuota-date">Cuota</div>          <!-- ← cambiado de "Fecha" a "Cuota" -->
+          <div class="cuota-date">Cuota</div>
           <div class="cuota-value">Valor</div>
           <div class="cuota-status">Estado</div>
           <div></div>
@@ -102,7 +103,7 @@ export async function cargarPrestamos() {
       .order("numero", { ascending: true });
 
     if (cuotasError) {
-      console.error("Error cargando cuotas:", cuotasError);
+      console.error("Error cargando cuotas del préstamo " + p.id + ":", cuotasError);
       continue;
     }
 
@@ -118,7 +119,7 @@ export async function cargarPrestamos() {
 
       row.innerHTML = `
         <div class="cuota-num">${c.numero}</div>
-        <div class="cuota-date">Cuota Número ${c.numero}</div>   <!-- ← aquí se muestra "Cuota Número X" -->
+        <div class="cuota-date">Cuota Número ${c.numero}</div>
         <div class="cuota-value">$${format(c.valor)}</div>
         <div class="cuota-status">${estadoHTML}</div>
         <div></div>
@@ -132,3 +133,25 @@ export async function cargarPrestamos() {
   gananciaEl.textContent = "$" + format(ganancia);
   saldoPendienteEl.textContent = "$" + format(saldoPendiente);
 }
+
+// Función global para expandir/colapsar
+window.toggleCuotas = function(headerElement) {
+  const container = headerElement.nextElementSibling; // .cuotas-container
+  const icon = headerElement.querySelector('.toggle-icon');
+
+  if (container.style.display === 'none' || container.style.maxHeight === '0px') {
+    // Expandir
+    container.style.display = 'block';
+    container.style.maxHeight = container.scrollHeight + 'px';
+    icon.textContent = '▲';
+    icon.style.transform = 'rotate(180deg)';
+  } else {
+    // Colapsar
+    container.style.maxHeight = '0px';
+    setTimeout(() => {
+      container.style.display = 'none';
+    }, 400); // tiempo igual a la transición
+    icon.textContent = '▼';
+    icon.style.transform = 'rotate(0deg)';
+  }
+};
