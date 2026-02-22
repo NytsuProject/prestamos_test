@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> Control de Préstamos</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<header>
+  <h1> Control de Préstamos</h1>
+</header>
+
+<main>
+  <section class="dashboard">
+    <div class="card">
+      <h3>Total Prestado</h3>
+      <p id="totalPrestado">$0</p>
+    </div>
+    <div class="card">
+      <h3>Ganancia Proyectada</h3>
+      <p id="ganancia">$0</p>
+    </div>
+    <div class="card">
+      <h3>Saldo Pendiente</h3>
+      <p id="saldoPendiente">$0</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Crear Nuevo Préstamo</h2>
+    <label>Nombre del cliente</label>
+    <input id="cliente" type="text" placeholder="Ej: Carmen Daniela" required>
+    
+    <label>Capital ($)</label>
+    <input id="capital" type="number" placeholder="1.000.000" step="1000" min="10000">
+
+    <label>Tasa mensual (%)</label>
+    <input id="tasa" type="number" placeholder="5" step="0.1" min="0.1">
+
+    <label>Meses</label>
+    <input id="meses" type="number" placeholder="12" min="1">
+
+    <label>Tipo de pago</label>
+    <select id="tipo_pago">
+      <option value="quincenal">Quincenal</option>
+      <option value="mensual">Mensual</option>
+    </select>
+
+<button id="btnCrear" class="btn-primary btn-large">
+  <span>Crear Préstamo</span>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M12 5v14M5 12h14"/>
+  </svg>
+</button>  </section>
+
+  <section>
+  <h2 class="section-title">Préstamos Activos</h2>
+  <div class="loans-list" id="listaPrestamos"></div>
+</section>
+</main>
+
+<script type="module" src="js/supabaseClient.js"></script>
+<script type="module" src="js/dashboard.js"></script>
+<script type="module" src="js/prestamos.js"></script>
+<script type="module" src="js/cuotas.js"></script>
+
+</body>
+</html>
